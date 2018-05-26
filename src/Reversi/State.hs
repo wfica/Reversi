@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeSynonymInstances, FlexibleContexts, NoMonomorphismRestriction, FlexibleInstances #-}
+--{-# LANGUAGE TypeSynonymInstances, FlexibleContexts, NoMonomorphismRestriction, FlexibleInstances #-}
 
 module Reversi.State
 where
@@ -16,30 +16,30 @@ initial :: State
 initial = State B.empty O Nothing (generateMoves initial)
 
 properDirection
-    :: Board -> Int -> Int -> Player -> [(Int, Trio)] -> [(Int, Trio)]
-properDirection board i jump turn acc =
-    if board V.! i /= Just (theOtherPlayer turn)
-        then acc
-        else properDirection board (i + jump) jump turn ((i, Just turn) : acc)
+    :: Board -> Index -> Int -> Player -> [(Index, Field)] -> [(Index, Field)]
+properDirection board i jump turn acc = if outOfRangeIndex i
+    then []
+    else case board V.! i of
+        Nothing -> []
+        Just turn2 | turn2 == turn -> acc
+        _ -> properDirection board (i + jump) jump turn ((i, Just turn) : acc)
 
 
-makeMove :: Int -> Trio -> Player -> Board -> Maybe State
-makeMove _ Nothing  _ _ = Nothing
-makeMove _ (Just X) O _ = Nothing
-makeMove _ (Just O) X _ = Nothing
-makeMove i (Just s) turn board =
-    let changes = concatMap
-            (\jump -> properDirection board (i + jump) jump turn [])
-            indexJumps
-    in  if null changes
-            then Nothing
-            else
-                let nextBoard = State (board V.// changes)
-                                      (theOtherPlayer turn)
-                                      (Just i)
-                                      (generateMoves nextBoard)
-                in  Just nextBoard
-
+makeMove :: Index -> Field -> Player -> Board -> Maybe State
+makeMove _ (Just _) _    _     = Nothing
+makeMove i Nothing  turn board = case changes of
+    [] -> Nothing
+    _  -> Just nextBoard
+  where
+    changes :: [(Index, Field)]
+    changes = do
+        jump <- indexJumps
+        properDirection board (i + jump) jump turn []
+    nextBoard :: State 
+    nextBoard = State (board V.// ((i, Just turn) : changes))
+                      (theOtherPlayer turn)
+                      (Just i)
+                      (generateMoves nextBoard)
 
 
 generateMoves :: State -> [State]
@@ -54,5 +54,10 @@ printNicely state = do
     putStrLn $ "player: " ++ show (getPlayer state)
     B.printNicely (getBoard state)
 
+getIthGeneration :: State -> Int -> [State]
+getIthGeneration s 0 = [s]
+getIthGeneration s n = do
+    ns <- getNext s
+    getIthGeneration ns (n - 1)
 
 
