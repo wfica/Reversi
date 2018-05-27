@@ -29,5 +29,16 @@ printNicelyLn :: Board -> IO ()
 printNicelyLn board = printNicely board >> putChar '\n' 
 
 
+emptyTest :: Board 
+emptyTest = G.create $ do
+    vec <- GM.new 64
+    GM.set vec Nothing
+    GM.write vec (positionToIndex (3, 4)) (Just X)
+    GM.write vec (positionToIndex (4, 3)) (Just X)
+    -- GM.write vec (positionToIndex (3, 3)) (Just O)
+    GM.write vec (positionToIndex (4, 4)) (Just O)
+    return vec
+
+
 
 
