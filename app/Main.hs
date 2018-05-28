@@ -11,10 +11,15 @@ main = do
     print a
     print b
     mapM_ S.printNicely log 
+    print "-----------"
+    mapM_ S.printNicely (S.getIthGeneration stateTest 0)
+    print "-----------"
+    mapM_ S.printNicely (S.getIthGeneration stateTest 1)
     where  
         (a, b, log) = playOneGameWithLog
 
 
--- main = do 
---     mapM_ S.printNicely (S.getIthGeneration S.initialTest 2)
+
+boardTest = B.strToBoard "__________________________OOO______OOO______OOOX___OXXXX__OXXXXX"
+stateTest = State boardTest X Nothing (S.generateMoves stateTest)
 

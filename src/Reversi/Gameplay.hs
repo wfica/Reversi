@@ -26,17 +26,17 @@ play s = case player of
 
 playOneGame :: (Int, Int)
 playOneGame = play S.initial
-
 twoToThree :: (a, b) -> c -> (a, b, c)
 twoToThree (x, y) z = (x, y, z)
+
 
 playWithLog :: State -> [State]-> (Int, Int, [State])
 playWithLog s log = case player of
     X -> case AR.chooseMove moves of
-        Nothing -> twoToThree (S.getStats s) log 
+        Nothing -> twoToThree (S.getStats s) (s:log)
         Just c  -> playWithLog (moves !! c) (s:log)
     O -> case AC.chooseMove moves of
-        Nothing -> twoToThree (S.getStats s) log 
+        Nothing -> twoToThree (S.getStats s) (s:log)
         Just c  -> playWithLog (moves !! c) (s:log)
   where
     player = getPlayer s
@@ -44,4 +44,3 @@ playWithLog s log = case player of
 
 playOneGameWithLog :: (Int, Int, [State])
 playOneGameWithLog = playWithLog S.initial [] 
-
