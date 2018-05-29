@@ -1,13 +1,12 @@
 --{-# LANGUAGE TypeSynonymInstances, FlexibleContexts, NoMonomorphismRestriction, FlexibleInstances #-}
 
-module Reversi.AgentRandom
+module Reversi.RandomPlay
 where
 
 import           Reversi
 import qualified Reversi.State                 as S
 
 import           System.Random
-
 
 
 makeRandomMove :: State -> IO (Maybe State)
