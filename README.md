@@ -1,6 +1,6 @@
 # Reversi random generator
 
-Prosuces random rounds of reversi.
+Produces random rounds of reversi.
 
 Compilation: ```stack build```
 
